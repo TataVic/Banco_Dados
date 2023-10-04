@@ -1,0 +1,16 @@
+Definição: bloco de comando que seja executado automaticamente com os comandos de Insert|Delete|Update - execução em tabela;
+
+- Cria consistências e retrições de banco (rotina de segurança);
+
+Tipos de trigger: DML (comando sql: Insert|Update|Delete) || DDL (em storeds procedure e eventos: Create|Alter|Drop);
+Sintaxe: 
+CREATE TRIGGER [NOME DO TRIGGER]-gatilho de objeto
+ON [NOME DA TABELA]
+[FOR/AFTER/INSTEAD OF]-opção
+[INSERT/UPDATE/DELETE]
+AS
+--CORPO DO TRIGGER
+
+* FOR é o valor padrão e faz com o que o gatilho seja disparado junto da ação. 
+* AFTER faz com que o disparo se dê somente após a ação que o gerou ser concluída. 
+* INSTEAD OF faz com que o trigger seja executado no lugar da ação que o gerou.
