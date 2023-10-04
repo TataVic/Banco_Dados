@@ -105,3 +105,93 @@ as begin
 	PePreco = @pç_preco
 	where PeNro = @pç_num 
 end 
+-- aula 18/08
+-- Exercicio 13
+Create procedure sp_fornecimentos_buscar
+as 
+begin
+select p.PeNome, f.FNome, fp.Quant
+from Peca p, Fornece_Para fp, Fornecedor f
+where f.FNro= fp.FNro 
+and p.PeNro = fp.PeNro
+end
+sp_fornecimentos_buscar
+--drop procedure sp_fornecimentos_buscar
+
+--Exercicio 14 
+Create procedure sp_peca_fornecidas (@num_peca as int)
+as 
+begin
+	select p.PeNome Nome_peca, f.FNome , fp.Quant Qtd
+	from Peca p, Fornece_Para fp, Fornecedor f
+	Where p.PeNro = @num_peca
+		and p.PeNro= fp.PeNro
+end
+
+sp_peca_fornecidas 1
+
+
+--Exercicio 16
+Create Procedure sp_fornecimento_peca (@qtd as int)
+as 
+begin
+	select p.PeNome Nome_peca, f.FNome fornecedores, fp.Quant qtd
+	from Peca p, Fornecedor f, Fornece_Para fp
+	where fp.Quant >= @qtd 
+		and p.PeNro = fp.PeNro
+		and fp.FNro = f.FNro
+end
+--drop procedure sp_qtd_fornecida
+sp_qtd_fornecida 5
+-- exercicio 17 
+Create Procedure sp_fornecim_peca (@qtd as int, @num_peca as int)
+as 
+begin
+	select p.PeNome Nome_peca, f.FNome fornecedores, fp.Quant qtd
+	from Peca p, Fornecedor f, Fornece_Para fp
+	where p.PeNro = @num_peca
+		and fp.Quant >= @qtd 
+		and p.PeNro = fp.PeNro
+		and fp.FNro = f.FNro
+end
+select * from Pecas
+select * from Fornece_Para
+sp_fornecim_peca 3,4
+
+-- exemplo 18
+Create Procedure sp_fornecim_buscar (@cor as varchar (20), @qtd as int )
+as 
+begin
+	select p.PeNome Nome_peca,fp.Quant qtd
+	from Peca p, Fornece_Para fp
+	where p.PeCor = @cor
+		and fp.Quant >= @qtd 
+		and p.PeNro = fp.PeNro
+end
+sp_fornecim_buscar 'Vermelho', 1
+select * from Pecas
+select * from Fornece_Para
+
+-- exercicio 19 - group by com totalizações
+create procedure sp_pecas_total as
+begin
+	select p.Penro, 
+		p.PeNome Nome_peca, 
+		sum(p.PePreco * fp.Quant) as total
+	from Peca p, Fornece_Para fp
+	where p.PeNro = fp.PeNro
+	group by p.PeNro, p.PeNome
+end
+sp_pecas_total
+
+-- exercicio 20
+create procedure sp_fornecim_total_peca (@peca as int)
+as
+begin 
+	select p.Penro, 
+		p.PeNome Nome_peca, 
+		sum(p.PePreco * fp.Quant) as total
+	from Peca p, Fornece_Para fp
+	where p.PeNro = fp.PeNro
+	group by p.PeNro, p.PeNome
+end
