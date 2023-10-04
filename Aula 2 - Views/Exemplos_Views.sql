@@ -1,17 +1,17 @@
 -- Views 
 -- duas formas: 
-create view VisaoFornecedoresPeças3 as  
-	select p.penro, p.PeNome NomePeça 
+create view VisaoFornecedoresPeÃ§as3 as  
+	select p.penro, p.PeNome NomePeÃ§a 
 	from Peca p 
 	where p.PeNro IN ( 
 		select 	distinct fp.PeNro 
 		from Fornece_para fp 
 		where fp.FNro not in ( select f.FNro 
-								from Fornecedor f 
-								where	f.FCateg = 'A' ) ) 
+					from Fornecedor f 
+					where	f.FCateg = 'A' ) ) 
 
  -- Ou dessa forma:
-create view VisaoFornecedoresPeças4 as  
+create view VisaoFornecedoresPeÃ§as4 as  
 	select distinct p.penro, p.PeNome 
 	from Peca p 
 		inner join Fornece_Para fp on fp.PeNro = p.PeNro  
