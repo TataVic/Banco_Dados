@@ -14,16 +14,11 @@ Create trigger Ex2 on Peca INSTEAD OF delete as
 	delete from Peca where PeNro = 6
 
 --3 - Crie um trigger para, ao invés de atualizar o nome de uma peça com um valor qualquer, atualize o campo Pecor dela para 'Amarelo'.  
-Create trigger Ex3 on Peca INSTEAD OF update as
-    IF UPDATE (PeNome)
-    BEGIN
-        UPDATE peca
-        SET Pecor = 'Amarelo'
-        FROM peca AS p
-        INNER JOIN inserted AS i ON p.PeNro = i.PeNro;
-    END
+Alter trigger Ex3 on Peca INSTEAD OF update as
+   Update Peca set PeCor = 'Amarelo'
+   Where PeNro in (select PeNro from inserted)
 
-	update Peca set PeNome = 'teste' where PeNro = 2
+	update Peca set PeNome = 'teste' where PeNro = 3
 		
 	select * from Peca
 
