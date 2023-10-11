@@ -1,0 +1,80 @@
+Function em SQL Server - são utilizadas para "quebrar" grandes tarefas em pequenos bucado de processamento de dados.
+Características: 
+- gerenciamento de pequenas unidades lógicas;
+- sem repetição de código da tarefa; 
+- desempenho no processamento;
+
+VARIÁVEL TABLE (tabelas temporárias): armazena temporariamente um conjunto de linhas para realizar após algum tipo de processamento ou variável local da chamada, e armazena para o retorno da função. 
+EXEMPLO: 
+Declare @MinhaTabela TABLE (PeNro int Primary Key,Penome varchar (30))
+	Insert into @MinhaTabela
+	Select distinct PeNro, Penome
+	from Peca where Penome like 'L%'
+Select * from @MinhaTabela where Penome = 'Lanterna'
+
+	Escopo: bem definida podendo ser uma stored procedure ou instruções ou tabelas; "não poderá utilizar uma variável table nos seguintes casos:
+INSERT INTO variável_table EXEC stored_procedure
+SELECT select_list INTO variável_table"
+	Declaração: possui quando a tabela está vazia sendo assim "Não é permitido associar valores a uma variável do tipo table."
+	Indices: não permite criar indices adicionais através das declarações CONSTRAINTS como PRIMARY KEY e UNIQUE.
+	Transações: O conteúdo da table não possui influência por rollback nas transações, nas quais não fazem parte de um banco e as alterações de variáveis não são inseridas. 
+
+INVOCAR FUNCTIONS: [database_name.][owner_name.]function_name ([argument_expr][,...]) invoda em expressões ou apenas seu nome; 
+
+Função UDF (User-defined functions) - função definida pelo usuário na qual retorna valores comuns ou valores em formato de tabela com ocorrências múltiplas (tuplas) e semelhante a stored procedure. 
+Característica: retona resultados a partir de chamadas SQL.
+
+
+			Criando funções e retornando tabelas
+
+Antes de poder definir uma UDF, deve-se determinar suas características, tais como, seu nome, sua vinculação ou não aos objetos referenciados, o número e tipos de dados dos parâmetros que ela terá, e finalmente, os tipos de valores retornados. Você então executa a instrução CREATE FUNCTION para criar a UDF. Caso após definir a função você venha a descobrir que qualquer uma das características não são apropriadas, você poderá usar a instrução ALTER FUNCTION para alterar as informações utilizadas em sua definição.
+
+Você não poderá fazer uso da instrução ALTER FUNCTION para modificar o tipo de uma função, ou seja, uma função do tipo scalar valued para uma função do tipo table valued ou vice-versa. Similarmente, você não poderá utilizar a instrução ALTER FUNCTION para modificar uma função do tipo inline para uma função multi-statement ou vice-versa. Entretanto, você poderá remover funções UDF com a instrução DROP FUNCTION.
+
+* Três tipos de UDF: 
+1· Scalar valued functions (Função de valor escalar)
+
+2· Inline table valued functions (Função de valor de tabela por linha)
+
+3· Multi-statement table valued functions (Funções com valor de tabela com múltiplas instruções)
+
+1 - //Scalar Função que retorna um único valor e cláusula de retorno especifica um tipo de dado escalare e exemplo: 
+CREATE FUNCTION Volume(@Altura decimal, @Largura decimal, @Profund decimal )
+RETURNS decimal -- tipo de dado de retorno.
+AS
+BEGIN
+RETURN (@Altura * @Largura * @Profund)
+END
+Chamadas: nome_do_banco_de_dados.nome_do_usuário.nome_da_função
+
+2 - //Inline Função que retorna uma tabela, contendo em seu corpo de definição apenas uma instrução SELECT. As colunas, incluindo os tipos de dados, da tabela a ser retornada pela função, são derivadas da lista de campos da cláusula SELECT definida no corpo da função;
+CREATE FUNCTION fc_FornecedoresCidade (@Cidade varchar (20))
+RETURNS TABLE
+AS
+RETURN (
+	SELECT FNome, FCateg
+	FROM Fornecedor
+	WHERE FCidade = @Cidade
+	)
+Chamada: SELECT * FROM fc_FornecedoresCidade ('Campinas')
+DROP FUNCTION dbo.fc_QtdPeçasFornecidas
+
+3 - //Multi-Statement Função de definição sobre a estrutura da tabela, bem como os seus campos com os respectivos tipos de dados;
+Pode se utilizar para: 
+· Instruções de controle de fluxo (while, case, if, return, goto, break, continue).
+
+· Instruções de DECLARE para variáveis e cursores locais no escopo da função.
+
+· As atribuições de valores para objetos locais da função são permitidas com a utilização da opção SET para variáveis locais do tipo table e scalar.
+
+· Instruções de SELECT para fazer operações de atribuição em variáveis locais do escopo da função.
+
+· Operações para manipulação de cursores locais na função, como abrir, fechar e etc. Apenas instruções FETCH que fazem atribuições em variáveis locais na função serão permitidas usando a cláusula INTO; FETCH que retorne dados diretamente para um cliente não é possível.
+
+· INSERT, UPDATE, e DELETE que modifique uma variável local do tipo table.
+
+· Além disso, não é possível utilizar funções não determinísticas no corpo de uma função.
+
+*** Funções Não Determinísticas são funções que sempre retornam valores diferentes cada vez que você faz uma chamada, independente dos valores de entrada.
+*** Função é Determinística se ela sempre retorna o mesmo valor se for chamada com os mesmos valores nos parâmetros.
+
