@@ -14,3 +14,24 @@ AS
 * FOR é o valor padrão e faz com o que o gatilho seja disparado junto da ação. 
 * AFTER faz com que o disparo se dê somente após a ação que o gerou ser concluída. 
 * INSTEAD OF faz com que o trigger seja executado no lugar da ação que o gerou.
+
+Tabelas inserted e deleted: tabelas temporárias que existem quando a trigger estiver em ativa e 
+- quando um comando Insert ou Update é executado, o(s) registro(s) criado(s) ou alterado(s) é(são) copiado(s) para a tabela Inserted. 
+- quando um comando Delete é executado, as linhas excluídas são copiadas dentro da tabela Deleted.
+
+Replicação de linhas com triggers:
+- inserção:
+Create Trigger InsReplic On Peca For Insert as
+Insert into Peca2
+Select * from Inserted
+- exclusão:
+Create Trigger DelReplic On Peca For Delete
+As
+Delete From Peca2
+Where Peca2.PeNro in (Select PeNro From Deleted)
+- alteração:
+Create Trigger UpdReplic On Peca For Update
+As
+Update Peca2
+Set PePreco = (Select PePreco From Inserted)
+Where Peca2.PeNro in (Select PeNro From Inserted)
