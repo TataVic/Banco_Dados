@@ -1,0 +1,8 @@
+Cursores 
+- Uma forma de armazenar a quantidade desejada de registros, em que seja alocado uma memória para esses dados, na qual opossa ser aplicados a instruções DDLs. 
+"O número de registros retornados depende do tamanho da tabela e da forma com que são buscados em conjunto com a cláusula WHERE, que realiza uma filtragem nos dados selecionados"
+
+* último registro do arquivo  = EOF;
+
+
+DEFINIÇÂO: O cursor é um conjunto de dados obtidos do BD que é acessado a partir de uma instrução SELECT linha a linha por meio de um laço While e alguns comandos específicos para cursores e é utilizado normalmente em procedimentos armazenados (stored procedures).
