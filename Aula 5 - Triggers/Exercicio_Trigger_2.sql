@@ -66,7 +66,7 @@ select * from Projeto
 Create table Historico_Projeto (
 	Nro int not null PRIMARY KEY,
     DataAlteracao DATETIME NOT NULL, 
-    PNro INT NOT NULL, 
+    PNome varchar(255) NOT NULL, 
     CampoAlterado VARCHAR(255) NOT NULL, 
     ValorAntigo float, 
     ValorNovo float  
@@ -78,22 +78,15 @@ FOREIGN KEY (PNro) REFERENCES Projeto(Nro);
 
 --5 - Criar um trigger para atualizar a tabela Histórico de Projetos que é disparado quando houver a modificação SOMENTE no atributo 
 --PDuração no Projeto. 
-CREATE TRIGGER Ex5L2 ON Projeto AFTER UPDATE
-AS
-BEGIN
-    IF UPDATE(PDuracao)
-    BEGIN
-        INSERT INTO Historico_Projetos values (DataAlteracao, PNro, CampoAlterado, ValorAntigo, ValorNovo)
-        SELECT
-            GETDATE(),  
-            i.PNro,    
-            'Duracao alterada',
-            d.PDuracao,
-            i.PDuracao  -- Valor novo do campo (após a atualização)
-        FROM inserted i
-        JOIN deleted d ON i.PNro = d.PNro;
-    END
-END;
+CREATE TRIGGER Ex5L2 ON Projeto AFTER UPDATE as
+begin 
+if update (PDuracao)
+        INSERT INTO Historico_Projeto (Nro, DataAlteracao, PNro, PDuracao)
+		select * from deleted  ;
+ -- Trigger update Projeto
+ -- Inserir registro atualizado em historico
+ -- Quando atualização for PDuracao
+
 --6 - Criar 2 tabelas: Projeto_atualizado e Projeto_antigo 
 create table Pj_atualizado(
 	[PNro_atual] int NOT NULL,
