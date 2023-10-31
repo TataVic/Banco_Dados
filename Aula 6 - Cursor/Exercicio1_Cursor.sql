@@ -16,9 +16,30 @@ CREATE PROCEDURE EXEC_CURSOR_1 (@var as float) as begin
 --2 – Crie um Trigger que é disparado quando se atualiza uma categoria qualquer de Fornecedor, 
 --com um cursor que armazene os fornecedores que não são das categorias ‘A’, ‘B’ e ‘C’, 
 --e atualize suas categorias para ‘C’.
-
+CREATE Trigger EXEC_CURSOR_2 as begin 
+	declare cursor_trigger cursor for
+	Update Fornecedor set FCateg = 'C' 
+		Where Fornecedor.FNro in (select FNro from deleted)
+			and FCateg not in ('A', 'B', 'C')
+	end
+	open cursor_trigger
+	fetch next from cursor_trigger 
+	while @@FETCH_STATUS = 0 
+		begin	
+			Select f.FNome, f.FCateg from Fornecedor f 
+			Inner Join Fornece_Para fp on fp.FNro = f.FNro
 --3 – Faça uma Stored Procedure que armazene em um cursor todos os códigos de projetos que têm fornecedores 
 --que são da categoria A ou B. Atualize todos os custos desses projetos de tais fornecedores em 10%.
+CREATE PROCEDURE EXEC_CURSOR_3  as begin 
+	declare cursor_procedure cursor for
+		select distinct --primary key
+		PCusto from Projeto where  PCusto > 25000
+	open cursor_procedure
+	fetch next from cursor_procedure 
+	while @@FETCH_STATUS = 0 
+		begin	
+			Select f.FNome, f.FCateg from Fornecedor f 
+			Inner Join Fornece_Para fp on fp.FNro = f.FNro
 
 --4 – Faça uma Stored Procedure com um cursor que receba o código do fornecedor, 
 --selecionando todos os projetos nos quais este fornecedor possui fornecimento 
