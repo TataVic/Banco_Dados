@@ -36,36 +36,25 @@ exercicio1
 --2 – Crie um Trigger que é disparado quando se atualiza uma categoria qualquer de Fornecedor, 
 --com um cursor que armazene os fornecedores que não são das categorias ‘A’, ‘B’ e ‘C’, 
 --e atualize suas categorias para ‘C’.
-create TRIGGER EXEC_CURSOR_2 ON Fornecedor
-AFTER UPDATE
-AS
-BEGIN
-    -- Verifique se houve uma atualização nas categorias de fornecedor
-    IF UPDATE(FCateg)
-    BEGIN
-        DECLARE @FNro INT;
-        DECLARE cursor_trigger CURSOR FOR
+ALTER TRIGGER EXEC_CURSOR_2 ON Fornecedor AFTER UPDATE AS BEGIN
+	DECLARE @FNro INT;
+    DECLARE cursor_trigger CURSOR FOR
         SELECT FNro
         FROM Fornecedor
         WHERE FCateg NOT IN ('A', 'B', 'C');
-
-        OPEN cursor_trigger;
-        FETCH NEXT FROM cursor_trigger INTO @FNro;
-
-        WHILE @@FETCH_STATUS = 0
-        BEGIN
-            -- Atualize as categorias para 'C'
+    OPEN cursor_trigger;
+    FETCH NEXT FROM cursor_trigger INTO @FNro;
+	WHILE @@FETCH_STATUS = 0
+      BEGIN
             UPDATE Fornecedor
             SET FCateg = 'C'
             WHERE FNro = @FNro;
-
-            FETCH NEXT FROM cursor_trigger INTO @FNro;
-        END;
-
-        CLOSE cursor_trigger;
-        DEALLOCATE cursor_trigger;
+	FETCH NEXT FROM cursor_trigger INTO @FNro;
     END;
-END;
+		CLOSE cursor_trigger;
+        DEALLOCATE cursor_trigger;
+		END;
+
 SELECT * FROM Fornecedor
 UPDATE Fornecedor SET FCateg = 'E' where FNro = 3
  
@@ -74,64 +63,41 @@ UPDATE Fornecedor SET FCateg = 'E' where FNro = 3
 -- Crie uma Stored Procedure que atualiza os custos de projetos com fornecedores das categorias A ou B em 10%.
 
 CREATE PROCEDURE AtualizarCustosProjetos()
-AS
-BEGIN
-    -- Declare um cursor para armazenar os códigos de projetos com fornecedores das categorias A ou B.
-    DECLARE @ProjetoCursor CURSOR;
-
-    -- Declare variáveis para armazenar os códigos de projeto e o novo custo.
-    DECLARE @ProjetoCodigo INT;
-    DECLARE @NovoCusto DECIMAL(10, 2);
-
-    -- Inicialize o cursor.
+AS BEGIN
+DECLARE @ProjetoCursor CURSOR;
+DECLARE @ProjetoCodigo INT;
+DECLARE @NovoCusto DECIMAL(10, 2);
     SET @ProjetoCursor = CURSOR FOR
-    SELECT P.ProjetoCodigo, P.Custo
-    FROM Projeto P
-    INNER JOIN Fornece_Para FP ON P.FNro = FP.FNro
-    INNER JOIN Fornecedor F ON FP.FNro = F.FNro
-    WHERE F.FCateg IN ('A', 'B');
-
-    -- Abra o cursor.
+		SELECT P.PNro, P.PCusto
+		FROM Projeto P
+			INNER JOIN Fornece_Para FP ON F.FNro = FP.FNro
+			INNER JOIN Fornecedor F ON FP.FNro = F.FNro
+		WHERE F.FCateg IN ('A', 'B');
     OPEN @ProjetoCursor;
-
-    -- Inicie a leitura do cursor.
     FETCH NEXT FROM @ProjetoCursor INTO @ProjetoCodigo, @NovoCusto;
-
-    -- Atualize os custos dos projetos em 10%.
-    WHILE @@FETCH_STATUS = 0
-    BEGIN
-        SET @NovoCusto = @NovoCusto * 1.1; -- Aumenta o custo em 10%.
-        UPDATE Projeto
-        SET Custo = @NovoCusto
-        WHERE ProjetoCodigo = @ProjetoCodigo;
-
-        -- Continue lendo o cursor.
-        FETCH NEXT FROM @ProjetoCursor INTO @ProjetoCodigo, @NovoCusto;
+WHILE @@FETCH_STATUS = 0
+   BEGIN
+      SET @NovoCusto = @NovoCusto * 1.1; -- Aumenta o custo em 10%.
+      UPDATE Projeto
+      SET PCusto = @NovoCusto
+       WHERE PNro = @ProjetoCodigo;
+	FETCH NEXT FROM @ProjetoCursor INTO @ProjetoCodigo, @NovoCusto;
     END;
-
-    -- Feche e desaloque o cursor.
-    CLOSE @ProjetoCursor;
-    DEALLOCATE @ProjetoCursor;
-END;
-
+		CLOSE @ProjetoCursor;
+		DEALLOCATE @ProjetoCursor;
+		END;
 
 --4 – Faça uma Stored Procedure com um cursor que receba o código do fornecedor, 
 --selecionando todos os projetos nos quais este fornecedor possui fornecimento 
 --e aumente em 15% o custo de tais projetos.
 -- Crie uma Stored Procedure que aumenta em 15% o custo de projetos de um fornecedor especificado.
 
-CREATE PROCEDURE AumentarCustoProjetosPorFornecedor
-    @FornecedorCodigo INT
-AS
-BEGIN
-    -- Declare um cursor para selecionar os projetos do fornecedor especificado.
+CREATE PROCEDURE AumentarCustoProjetosPorFornecedor (@FornecedorCodigo INT)
+AS BEGIN
     DECLARE @ProjetoCursor CURSOR;
-
-    -- Declare variáveis para armazenar o custo e o código do projeto.
-    DECLARE @ProjetoCodigo INT;
+	DECLARE @ProjetoCodigo INT;
     DECLARE @Custo DECIMAL(10, 2);
 
-    -- Inicialize o cursor.
     SET @ProjetoCursor = CURSOR FOR
     SELECT P.ProjetoCodigo, P.Custo
     FROM Projeto P
