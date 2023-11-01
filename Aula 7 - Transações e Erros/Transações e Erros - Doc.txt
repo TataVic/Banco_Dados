@@ -1,0 +1,20 @@
+* Deixar de utilizar aquele processo por inteiro, para que anulasse todos os processos a partir de certas condições;
+
+* TRANSAÇÕES SQl : utilizam se três comandos
+	1º Begin Transaction
+	2º Commit || Commit Transaction 
+	3º RollBack || Rollback Transaction
+"Só um detalhe quanto aos comandos ROLLBACK e COMMIT. Sem nomear uma transação, o uso do TRANSACTION é opcional nestes dois comandos"
+
+EXEMPLO: 
+	begin transaction
+		delete from Peca where PePreco > 65
+	if @@ERROR <> 0
+		ROLLBACK TRANSACTION
+	else
+		COMMIT TRANSACTION
+
+Perceba que no exemplo acima, iniciamos a transação com o BEGIN TRANSACTION. Vamos supor que a tabela possua 5000 registros que satisfaçam a condição e que por algum motivo, no registro 4628 houve um problema. Neste caso, a variável do SQL Server chamada @@ERROR vai guardar o código do erro, o comando ROLLBACK será executado e os 4628 registros já atualizados serão automaticamente voltados ao seu estado anterior. Alternativamente, se tudo correr bem, o comando COMMIT é executado e todos os 5000 registros que atenderam à condição serão atualizados com êxito.
+
+!! Regras de transações: Curtas e instruções necessárias;
+(Continuação)
