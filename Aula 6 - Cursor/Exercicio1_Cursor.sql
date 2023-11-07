@@ -36,7 +36,7 @@ exercicio1
 --2 – Crie um Trigger que é disparado quando se atualiza uma categoria qualquer de Fornecedor, 
 --com um cursor que armazene os fornecedores que não são das categorias ‘A’, ‘B’ e ‘C’, 
 --e atualize suas categorias para ‘C’.
-ALTER TRIGGER EXEC_CURSOR_2 ON Fornecedor AFTER UPDATE AS BEGIN
+Create TRIGGER Exercicio2 ON Fornecedor AFTER UPDATE AS BEGIN
 	DECLARE @FNro INT;
     DECLARE cursor_trigger CURSOR FOR
         SELECT FNro
@@ -62,7 +62,7 @@ UPDATE Fornecedor SET FCateg = 'E' where FNro = 3
 --que são da categoria A ou B. Atualize todos os custos desses projetos de tais fornecedores em 10%.
 -- Crie uma Stored Procedure que atualiza os custos de projetos com fornecedores das categorias A ou B em 10%.
 
-CREATE PROCEDURE AtualizarCustosProjetos()
+CREATE PROCEDURE Exec3
 AS BEGIN
 DECLARE @ProjetoCursor CURSOR;
 DECLARE @ProjetoCodigo INT;
@@ -70,7 +70,7 @@ DECLARE @NovoCusto DECIMAL(10, 2);
     SET @ProjetoCursor = CURSOR FOR
 		SELECT P.PNro, P.PCusto
 		FROM Projeto P
-			INNER JOIN Fornece_Para FP ON F.FNro = FP.FNro
+			INNER JOIN Fornece_Para FP ON P.PNro = FP.FNro
 			INNER JOIN Fornecedor F ON FP.FNro = F.FNro
 		WHERE F.FCateg IN ('A', 'B');
     OPEN @ProjetoCursor;
@@ -86,6 +86,10 @@ WHILE @@FETCH_STATUS = 0
 		CLOSE @ProjetoCursor;
 		DEALLOCATE @ProjetoCursor;
 		END;
+		--insert into Fornecedor values ( 6,'Teste', 'jabuticabal', 'A')
+		select * from Projeto
+		select * from Fornecedor
+
 
 --4 – Faça uma Stored Procedure com um cursor que receba o código do fornecedor, 
 --selecionando todos os projetos nos quais este fornecedor possui fornecimento 
