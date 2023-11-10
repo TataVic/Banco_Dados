@@ -5,7 +5,7 @@
 BEGIN TRANSACTION -- Atualização do custo do projeto 10%
 UPDATE Projeto
 SET PCusto = PCusto * 1.1
-WHERE PNro = 1
+--WHERE PNro = 1 --atualizar uma linha
 COMMIT TRANSACTION
 
 BEGIN TRANSACTION -- Inserção de um registro na tabela de fornecedores
@@ -19,7 +19,7 @@ BEGIN TRANSACTION
 	BEGIN TRANSACTION -- Atualização do custo do projeto 10%
 	UPDATE Projeto
 	SET PCusto = PCusto * 1.1
-	WHERE PNro = 1
+	--WHERE PNro = 1
 	COMMIT TRANSACTION
 
 	BEGIN TRANSACTION -- Inserção de um registro na tabela de fornecedores
