@@ -38,7 +38,8 @@ DECLARE @ProjetoNome NVARCHAR(100);
 DECLARE @ProjetoCusto DECIMAL(10, 2);
 DECLARE @ProjetoDuracao INT;
 SET @ProjetoCursor = CURSOR FOR
-	SELECT Nome, Custo, Duracao
+--select * from Projeto
+	SELECT PNome Nome, PCusto, PDuracao
 	FROM Projeto;
 OPEN @ProjetoCursor;
 FETCH NEXT FROM @ProjetoCursor INTO @ProjetoNome, @ProjetoCusto, @ProjetoDuracao;
@@ -70,7 +71,6 @@ BEGIN
     SET @PecaCursor = CURSOR FOR
 		SELECT pe.PeNro, pe.PePreco
 		FROM Peca pe 
-		WHERE PP.FNro = @FornecedorCodigo;
     OPEN @PecaCursor;
     FETCH NEXT FROM @PecaCursor INTO @PecaNumero, @Preco;
     WHILE @@FETCH_STATUS = 0
@@ -78,7 +78,7 @@ BEGIN
         SET @Preco = @Preco * (1 + @PorcentagemReajuste / 100);
         UPDATE Peca_Para
         SET Preco = @Preco
-        WHERE PecaNumero = @PecaNumero;
+        WHERE NPro = @PecaNumero;
         FETCH NEXT FROM @PecaCursor INTO @PecaNumero, @Preco;
     END;
     CLOSE @PecaCursor;
