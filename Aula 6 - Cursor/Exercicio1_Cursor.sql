@@ -103,30 +103,19 @@ AS BEGIN
     DECLARE @Custo DECIMAL(10, 2);
 
     SET @ProjetoCursor = CURSOR FOR
-    SELECT P.ProjetoCodigo, P.Custo
-    FROM Projeto P
-    INNER JOIN Fornece_Para FP ON P.FNro = FP.FNro
-    WHERE FP.FNro = @FornecedorCodigo;
-
-    -- Abra o cursor.
+		SELECT P.ProjetoCodigo, P.Custo
+		FROM Projeto P
+		INNER JOIN Fornece_Para FP ON P.FNro = FP.FNro
     OPEN @ProjetoCursor;
-
-    -- Inicie a leitura do cursor.
     FETCH NEXT FROM @ProjetoCursor INTO @ProjetoCodigo, @Custo;
-
-    -- Atualize os custos dos projetos em 15%.
     WHILE @@FETCH_STATUS = 0
     BEGIN
         SET @Custo = @Custo * 1.15; -- Aumenta o custo em 15%.
-        UPDATE Projeto
-        SET Custo = @Custo
-        WHERE ProjetoCodigo = @ProjetoCodigo;
-
-        -- Continue lendo o cursor.
+			UPDATE Projeto
+			SET Custo = @Custo
+			WHERE ProjetoCodigo = @ProjetoCodigo;
         FETCH NEXT FROM @ProjetoCursor INTO @ProjetoCodigo, @Custo;
     END;
-
-    -- Feche e desaloque o cursor.
     CLOSE @ProjetoCursor;
     DEALLOCATE @ProjetoCursor;
 END;
