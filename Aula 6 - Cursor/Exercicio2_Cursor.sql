@@ -34,7 +34,7 @@ DEALLOCATE @FornecedorCursor;
 -- Crie um cursor para consultar os nomes, custos e durações de todos os projetos.
 
 DECLARE @ProjetoCursor CURSOR;
-DECLARE @ProjetoNome NVARCHAR(100);
+DECLARE @ProjetoNome VARCHAR(100);
 DECLARE @ProjetoCusto DECIMAL(10, 2);
 DECLARE @ProjetoDuracao INT;
 SET @ProjetoCursor = CURSOR FOR
@@ -69,6 +69,7 @@ BEGIN
     DECLARE @PecaNumero INT;
     DECLARE @Preco DECIMAL(10, 2);
     SET @PecaCursor = CURSOR FOR
+		--pode utilizar a tabela forne_para
 		SELECT pe.PeNro, pe.PePreco
 		FROM Peca pe 
     OPEN @PecaCursor;

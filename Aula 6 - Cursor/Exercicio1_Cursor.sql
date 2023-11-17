@@ -68,7 +68,7 @@ DECLARE @ProjetoCursor CURSOR;
 DECLARE @ProjetoCodigo INT;
 DECLARE @NovoCusto DECIMAL(10, 2);
     SET @ProjetoCursor = CURSOR FOR
-		SELECT P.PNro, P.PCusto
+		--SELECT P.PNro, P.PCusto
 		FROM Projeto P
 			INNER JOIN Fornece_Para FP ON P.PNro = FP.FNro
 			INNER JOIN Fornecedor F ON FP.FNro = F.FNro
